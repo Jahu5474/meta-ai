@@ -11,6 +11,7 @@ type TranslationResponseBody = {
 
 
 
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TranslationResponseBody>
@@ -18,7 +19,7 @@ export default async function handler(
   const apiKey = process.env.GPT_KEY;
   const { prompt } = req.body as TranslationRequestBody;
   const response = await openai.Completion.create({
-    engine: 'text-davinci-002',
+    engine: 'text-davinci-003',
     prompt,
     max_tokens: 60,
     temperature: 0.7,
@@ -29,5 +30,14 @@ export default async function handler(
 
   const translatedText = response.choices[0].text;
   res.status(200).json({ translatedText })
+
 }
+
+
+
+
+
+
+
+
 

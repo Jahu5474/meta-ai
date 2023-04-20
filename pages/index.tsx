@@ -1,26 +1,45 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import { Heading } from '@chakra-ui/react'
+import { Box, Button, Heading } from '@chakra-ui/react'
+import { useState } from 'react';
 
-
-
-const Home = () => {
-  return (
-    <>
-      <Heading>
-        HELLO
-      </Heading>
-
-
-
-
-
-
-
-
-    </>
-  )
+interface TranslationResponse {
+  translatedText: string;
 }
 
-export default Home;
+export default function Home() {
+  const [translatedText, setTranslatedText] = useState("");
+
+  const handleTranslateClick = () => {
+    const data = {
+      prompt: "Translate this text into Japanese: Hello, World!"
+    };
+
+    fetch("/api/translate", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => response.json() as Promise<TranslationResponse>)
+      .then(data => {
+        setTranslatedText(data.translatedText);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  return (
+    <Box>
+      <Button onClick={handleTranslateClick}>
+        Translate
+      </Button>
+      <p>
+        Translated text: {translatedText}
+      </p>
+    </Box>
+  )
+
+}
