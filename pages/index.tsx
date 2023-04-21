@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { Box, Button, Heading, Text } from '@chakra-ui/react'
-import { useState } from 'react';
-import { error } from 'console';
+import { useState, ChangeEvent } from 'react';
+
 
 interface TranslationResponse {
   translatedText: string;
@@ -12,9 +12,12 @@ interface CustomError {
   message: string;
 }
 
+
+
 export default function Home() {
   const [translatedText, setTranslatedText] = useState("");
   const [error, setError] = useState<CustomError | null>(null);
+
 
   const handleTranslateClick = () => {
     const data = {
@@ -45,7 +48,8 @@ export default function Home() {
         Translate
       </Button>
       {error && <Text>Error: {error.message}</Text>}
-      {translatedText && <Text>Translated text: {translatedText}</Text>}
+      <Text>{translatedText}</Text>
+
 
     </Box>
   )
