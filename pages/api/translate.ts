@@ -7,6 +7,8 @@ type OpenAIResponse = {
   }[];
 };
 
+const apiKey = process.env.GPT_KEY;
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -16,14 +18,14 @@ export default async function handler(
       'https://api.openai.com/v1/models/text-davinci-003/completions',
       {
         prompt: 'What is the meaning of life?',
-        max_tokens: 5,
+        max_tokens: 60,
         n: 1,
         stop: '\n',
       },
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GPT_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
         },
       }
     );
