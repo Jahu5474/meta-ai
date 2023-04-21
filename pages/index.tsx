@@ -1,14 +1,20 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Box, Button, Heading } from '@chakra-ui/react'
+import { Box, Button, Heading, Text } from '@chakra-ui/react'
 import { useState } from 'react';
+import { error } from 'console';
 
 interface TranslationResponse {
   translatedText: string;
 }
 
+interface CustomError {
+  message: string;
+}
+
 export default function Home() {
   const [translatedText, setTranslatedText] = useState("");
+  const [error, setError] = useState<CustomError | null>(null);
 
   const handleTranslateClick = () => {
     const data = {
@@ -25,9 +31,11 @@ export default function Home() {
       .then(response => response.json() as Promise<TranslationResponse>)
       .then(data => {
         setTranslatedText(data.translatedText);
+        setError(null);
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error(error);
+        setError(error as CustomError);
       });
   };
 
@@ -36,9 +44,9 @@ export default function Home() {
       <Button onClick={handleTranslateClick}>
         Translate
       </Button>
-      <p>
-        Translated text: {translatedText}
-      </p>
+      {error && <Text>Error: {error.message}</Text>}
+      {translatedText && <Text>Translated text: {translatedText}</Text>}
+
     </Box>
   )
 

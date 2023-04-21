@@ -1,43 +1,36 @@
-import openai from 'openai';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
 
-type TranslationRequestBody = {
-  prompt: string;
+type OpenAIResponse = {
+  choices: {
+    text: string;
+  }[];
 };
-
-type TranslationResponseBody = {
-  translatedText: string;
-};
-
-
-
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<TranslationResponseBody>
+  res: NextApiResponse
 ) {
-  const apiKey = process.env.GPT_KEY;
-  const { prompt } = req.body as TranslationRequestBody;
-  const response = await openai.Completion.create({
-    engine: 'text-davinci-003',
-    prompt,
-    max_tokens: 60,
-    temperature: 0.7,
-    n: 1,
-    stop: '\n',
-    api_key: apiKey,
-  });
+  try {
+    const { data } = await axios.post<OpenAIResponse>(
+      'https://api.openai.com/v1/models/text-davinci-003/completions',
+      {
+        prompt: 'What is the meaning of life?',
+        max_tokens: 5,
+        n: 1,
+        stop: '\n',
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.GPT_KEY}`,
+        },
+      }
+    );
 
-  const translatedText = response.choices[0].text;
-  res.status(200).json({ translatedText })
-
+    res.status(200).json(data.choices[0].text);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
 }
-
-
-
-
-
-
-
-
-
