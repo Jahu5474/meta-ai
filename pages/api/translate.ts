@@ -7,7 +7,6 @@ type OpenAIResponse = {
   }[];
 };
 
-const apiKey = process.env.GPT_KEY;
 
 export default async function handler(
   req: NextApiRequest,
@@ -25,7 +24,7 @@ export default async function handler(
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer ${process.env.GPT_KEY}`,
         },
       }
     );
