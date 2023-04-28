@@ -1,57 +1,101 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Box, Button, Heading, Text } from '@chakra-ui/react'
-import { useState, ChangeEvent } from 'react';
+import { Box, Button, Heading, Text, Textarea } from '@chakra-ui/react';
+import React, { useRef } from 'react';
 
-
-interface TranslationResponse {
-  translatedText: string;
-}
-
-interface CustomError {
-  message: string;
+interface Conversation {
+  role: string
+  content: string
 }
 
 
 
 export default function Home() {
-  const [translatedText, setTranslatedText] = useState("");
-  const [error, setError] = useState<CustomError | null>(null);
 
 
-  const handleTranslateClick = () => {
-    const data = {
-      prompt: "Translate this text into Japanese: Hello, World!"
-    };
 
-    fetch("/api/translate", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(response => response.json() as Promise<TranslationResponse>)
-      .then(data => {
-        setTranslatedText(data.translatedText);
-        setError(null);
-      })
-      .catch((error: any) => {
-        console.error(error);
-        setError(error as CustomError);
-      });
-  };
+  const [value, setValue] = React.useState<string>("");
+  const [conversation, setConversation] = React.useState<Conversation[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  return (
-    <Box>
-      <Button onClick={handleTranslateClick}>
-        Translate
-      </Button>
-      {error && <Text>Error: {error.message}</Text>}
-      <Text>{translatedText}</Text>
-
-
-    </Box>
+  const handleInput = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(e.target.value)
+    },
+    []
   )
 
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const chatHistory = [...conversation, { role: "user", content: value }]
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: {
+          "Content-type": "applicationi/json"
+        },
+        body: JSON.stringify({ messages: chatHistory }),
+      })
+
+      const data = await response.json()
+      setValue("")
+      setConversation([
+        ...chatHistory, { role: "assistant", content: data.result.choices[0].message.content },
+      ])
+    }
+  }
+
+  const handleRefresh = () => {
+    inputRef.current?.focus()
+    setValue("")
+    setConversation([])
+  }
+
+  return (
+    <Box w="full">
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" textAlign="center">
+        <Heading>
+          Hey There
+        </Heading>
+      </Box>
+      <Box>
+        <Text>
+          Enter your Prompt:
+        </Text>
+        <input
+          placeholder='Type Here'
+          value={value}
+          onChange={handleInput}
+          onKeyDown={handleKeyDown}
+        />
+        <Button onClick={handleRefresh}>
+          Start New Conversation
+        </Button>
+        <Textarea
+
+        >
+          {conversation.map((item, index) => (
+            <React.Fragment key={index}>
+              <br />
+              {item.role === "assistant"} ? (
+              <Box>
+                <Box>
+                  <Heading>Ava</Heading>
+                  <br />
+                  {item.content}
+                </Box>
+              </Box>
+              ):(
+              <Box>
+                <Box>
+                  <Heading>User</Heading>
+                  <br />
+                  {item.content}
+                </Box>
+              </Box>
+              )
+
+            </React.Fragment>
+          ))}
+        </Textarea>
+      </Box>
+    </Box>
+  )
 }
