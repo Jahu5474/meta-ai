@@ -12,6 +12,7 @@ export default function Home() {
 
 
 
+
   const [value, setValue] = React.useState<string>("");
   const [conversation, setConversation] = React.useState<Conversation[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
@@ -29,7 +30,7 @@ export default function Home() {
       const response = await fetch("/api/translate", {
         method: "POST",
         headers: {
-          "Content-type": "applicationi/json"
+          "Content-type": "application/json"
         },
         body: JSON.stringify({ messages: chatHistory }),
       })
@@ -68,9 +69,8 @@ export default function Home() {
         <Button onClick={handleRefresh}>
           Start New Conversation
         </Button>
-        <Textarea
 
-        >
+        <Box>
           {conversation.map((item, index) => (
             <React.Fragment key={index}>
               <br />
@@ -94,7 +94,7 @@ export default function Home() {
 
             </React.Fragment>
           ))}
-        </Textarea>
+        </Box>
       </Box>
     </Box>
   )
