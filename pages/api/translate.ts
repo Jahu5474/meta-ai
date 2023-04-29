@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { OpenAIApi } from 'openai';
-import { Configuration } from 'openai';
+import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
-  apikey: process.env.API_KEY,
-})
+  apiKey: process.env.API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
-const openai = new OpenAIApi(configuration)
+
 
 export default async function handler(
   req: NextApiRequest,
