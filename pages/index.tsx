@@ -53,7 +53,7 @@ export default function Home() {
     <Box w="full">
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" textAlign="center">
         <Heading>
-          Hey There
+          Ava Chat Box
         </Heading>
       </Box>
       <Box>
@@ -94,6 +94,7 @@ export default function Home() {
 
             </React.Fragment>
           ))}
+
         </Box>
       </Box>
     </Box>

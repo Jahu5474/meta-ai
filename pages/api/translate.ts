@@ -17,6 +17,7 @@ export default async function handler(
     messages: req.body.messages,
 
   })
+  console.log(configuration)
 
   res.status(200).json({ result: completion.data })
 }
